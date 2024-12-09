@@ -35,3 +35,11 @@ test('search for an existing order created through API with fixture', async ({
   await page.getByTestId('searchOrder-submitButton').click()
   await expect(page.getByText('OPEN')).toBeVisible()
 })
+
+test('abstracted create order through UI with mainPage fixture', async ({ mainPage}) => {
+
+  await mainPage.getByTestId('username-input').fill(faker.internet.username())
+  await mainPage.getByTestId('phone-input').fill(faker.phone.number())
+  await mainPage.getByTestId('createOrder-button').click()
+  await expect(mainPage.getByTestId('orderSuccessfullyCreated-popup-ok-button')).toBeVisible()
+})

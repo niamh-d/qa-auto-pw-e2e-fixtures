@@ -1,11 +1,12 @@
-import { test as base } from '@playwright/test'
-import { BASE_API, loginPath, orderPath } from '../../config/env-data'
+import { Page, test as base } from '@playwright/test'
+import { BASE_API, loginPath, orderPath, SERVICE_URL } from '../../config/env-data'
 import { LoginDto } from '../dto/login-dto'
 import { OrderDto } from '../dto/order-dto'
 
 type Fixtures = {
   auth: { jwt: string }
   orderId: string
+  mainPage: Page
 }
 
 export const test = base.extend<Fixtures>({
@@ -33,6 +34,16 @@ export const test = base.extend<Fixtures>({
     const orderId = responseData.id
     console.log('order created with id: ', orderId)
     await use(orderId)
+  },
+
+  mainPage: async ({ context, auth }, use) => {
+    await context.addInitScript((token) => {
+      localStorage.setItem('jwt', token)
+    }, auth.jwt)
+
+    const mainPage = await context.newPage()
+    await mainPage.goto(SERVICE_URL)
+    await use(mainPage)
   },
 })
 
